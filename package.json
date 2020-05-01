@@ -1,0 +1,30 @@
+{
+  "name": "jiffymultiserver",
+  "version": "0.1.0",
+  "description": "Wrapper for nodejs server to answer requests on http & websocket",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipsilondev/jiffyMultiServer.git"
+  },
+  "keywords": [
+    "nodejs",
+    "fastify",
+    "socket.io",
+    "expressjs",
+    "http",
+    "websocket"
+  ],
+  "author": "Ipsilon Developments Inc.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ipsilondev/jiffyMultiServer/issues"
+  },
+  "homepage": "https://github.com/ipsilondev/jiffyMultiServer#readme",
+  "dependencies": {
+    "socket.io": "^2.3.0"
+  }
+}
