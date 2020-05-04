@@ -5,7 +5,11 @@ function jiffyMultiServer(httpServer, options = null) {
 	//format object = protocol + path : {'path' : string, 'options': Object, 'f': function}
 	this.listServicesWS = {};
 	//initializing server
+	if(httpServer.server != null && httpServer.server != undefined) {
+	this.io = require('socket.io')(this.httpServer.server);
+	}else{
 	this.io = require('socket.io')(this.httpServer);
+	}
 	//same structure as options, you can pass an options object plus a callabck or only the callback
 	this.get = function (path, ...args) {
 		this.httpServer.get(path, ...args);
@@ -22,7 +26,7 @@ function jiffyMultiServer(httpServer, options = null) {
 				path = resultPathParse.pathRegex;
 				paramsPath = resultPathParse.params;
 			}
-		listServicesWS['get/' + path] = {'path': path, 'options': options, 'f': f, 'params': paramsPath};
+		this.listServicesWS['get' + path] = {'path': path, 'options': options, 'f': f, 'params': paramsPath};
 		}
 	}
 	this.post = function (path, ...args) {
@@ -40,7 +44,7 @@ function jiffyMultiServer(httpServer, options = null) {
 				path = resultPathParse.pathRegex;
 				paramsPath = resultPathParse.params;
 			}
-			listServicesWS['post/' + path] = {'path': path, 'options': options, 'f': f, 'params': paramsPath};
+			this.listServicesWS['post' + path] = {'path': path, 'options': options, 'f': f, 'params': paramsPath};
 		}
 	}	
 	this.listen  = function (port, ...args) {
@@ -49,7 +53,7 @@ function jiffyMultiServer(httpServer, options = null) {
 			cb = args[1];
 		}
 		this.httpServer.listen(port, ...args);	
-			io.on('connection', (socket) => {
+			this.io.on('connection', (socket) => {
 					socket.on("req", (o) => {
 						var requestParam = o.reqPathServer.path;
 						var timestamp = o.reqPathServer.timestamp;
@@ -59,7 +63,7 @@ function jiffyMultiServer(httpServer, options = null) {
 							requestParam = o.reqPathServer99.path;							
 							timestamp = o.reqPathServer99.timestamp;
 						}
-						var responseObj = {};
+						var responseObj = {params: {}};
 						//parsing path & parameters
 						var keyService = '';
 						Object.keys(this.listServicesWS).forEach(k => {
@@ -71,7 +75,10 @@ function jiffyMultiServer(httpServer, options = null) {
 							socket.emit('res', {code: 404});
 						} else {
 							if(this.listServicesWS[keyService].params.length > 0) {
-							var arrayValuesParams = new RegExp(this.listServicesWS[keyService].path, 'ig').exec(requestParam).splice(1,1);
+								//console.log(this.listServicesWS[keyService].path);
+								//console.log(new RegExp(this.listServicesWS[keyService].path, 'ig').exec(requestParam));
+							var arrayValuesParams = new RegExp(this.listServicesWS[keyService].path, 'ig').exec(requestParam).splice(1,this.listServicesWS[keyService].params.length);
+							//console.log(arrayValuesParams);
 								for(var i=0; i < arrayValuesParams.length; i++){
 									responseObj.params[this.listServicesWS[keyService].params[i]] = arrayValuesParams[i];							
 								}
@@ -79,7 +86,7 @@ function jiffyMultiServer(httpServer, options = null) {
 								responseObj.params = null;
 							}
 							responseObj.originalUrl = requestParam.replace(/(get\/|post\/)/i, "");
-							responseObj.method = requestParam.substr(0, 2).toUpperCase();						
+							responseObj.method = requestParam.split("/")[0].toUpperCase();						
 							switch(responseObj.method) {
 								case 'POST':
 									responseObj.body = o;
@@ -90,16 +97,19 @@ function jiffyMultiServer(httpServer, options = null) {
 							}
 							// we create a new object instance, with the socket as member variable and the replication of the response function for compatibility
 							// in this way, when the refer to "this" in the response function, we get the socket of this request
-							var resObj = Object.assign({}, {"socket": socket, method: requestParam.substr(0, 2), "send": this.response, "json": this.response, "timestamp": timestamp, "path": requestParam, type: this.setType});
-							this.listServicesWS[k].f(responseObj, resObj);
+							var resObj = Object.assign({}, {"socket": socket, method: requestParam.split("/")[0], "send": this.response, "json": this.response, "timestamp": timestamp, "path": requestParam, type: this.setType});
+							this.listServicesWS[keyService].f(responseObj, resObj);
 						}
 					});				
 			});				
 	}
 	this.parsePathForWS = function(path) {
 		var r = {pathRegex: '', params: []};
-		r.params = path.match(new RegExp("\:[a-zA-Z0-9_-]+", 'ig'));
-		r.pathRegex = path.replace(/\:[a-zA-Z0-9_-]+/ig, '[a-zA-Z0-9_-]+').replace("/", "\/");
+		r.params = path.match(new RegExp("\:[a-zA-Z0-9\-\_\.]+", 'ig'));
+		for(var u = 0; u < r.params.length; u++) {
+			r.params[u] = r.params[u].replace(/\:/ig, '');
+		}
+		r.pathRegex = path.replace(/\:[a-zA-Z0-9\-\_\.]+/ig, '([a-zA-Z0-9\-\_\.]+)').replace("/", "\/");
 		return r;
 	}
 	this.response = function (data, type = null){
