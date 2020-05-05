@@ -1,15 +1,38 @@
 {
-  "name": "jiffymultiserver",
-  "version": "0.1.0",
-  "description": "Wrapper for nodejs server to answer requests on http & websocket",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
+  "_from": "git+https://github.com/ipsilondev/jiffyMultiServer.git",
+  "_id": "jiffymultiserver@0.1.0",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/jiffymultiserver",
+  "_phantomChildren": {},
+  "_requested": {
     "type": "git",
-    "url": "git+https://github.com/ipsilondev/jiffyMultiServer.git"
+    "raw": "https://github.com/ipsilondev/jiffyMultiServer",
+    "rawSpec": "https://github.com/ipsilondev/jiffyMultiServer",
+    "saveSpec": "git+https://github.com/ipsilondev/jiffyMultiServer.git",
+    "fetchSpec": "https://github.com/ipsilondev/jiffyMultiServer.git",
+    "gitCommittish": null
   },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "git+https://github.com/ipsilondev/jiffyMultiServer.git#afab5136f3333835d2a16de5977ce291b5d48b5a",
+  "_spec": "https://github.com/ipsilondev/jiffyMultiServer",
+  "_where": "/home/shadowlap/work/test-jiffy",
+  "author": {
+    "name": "Ipsilon Developments Inc."
+  },
+  "bugs": {
+    "url": "https://github.com/ipsilondev/jiffyMultiServer/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "socket.io": "^2.3.0"
+  },
+  "deprecated": false,
+  "description": "Wrapper for nodejs server to answer requests on http & websocket",
+  "homepage": "https://github.com/ipsilondev/jiffyMultiServer#readme",
   "keywords": [
     "nodejs",
     "fastify",
@@ -18,13 +41,15 @@
     "http",
     "websocket"
   ],
-  "author": "Ipsilon Developments Inc.",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ipsilondev/jiffyMultiServer/issues"
+  "main": "index.js",
+  "name": "jiffymultiserver",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipsilondev/jiffyMultiServer.git"
   },
-  "homepage": "https://github.com/ipsilondev/jiffyMultiServer#readme",
-  "dependencies": {
-    "socket.io": "^2.3.0"
-  }
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.1.0"
 }

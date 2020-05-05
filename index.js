@@ -1,23 +1,20 @@
 
-function jiffyMultiServer(httpServer, options = null) {
+function jiffyMultiServer(frameworkServer, httpServer, options = null) {
+	this.frameworkServer = frameworkServer;
 	this.httpServer = httpServer;
+	// options.http = 'fastify' | 'express'
 	this.options = options;
 	//format object = protocol + path : {'path' : string, 'options': Object, 'f': function}
 	this.listServicesWS = {};
 	//initializing server
-	if(httpServer.server != null && httpServer.server != undefined) {
-	this.io = require('socket.io')(this.httpServer.server);
-	}else{
-	this.io = require('socket.io')(this.httpServer);
-	}
+	this.io = require('socket.io')(httpServer);
 	//same structure as options, you can pass an options object plus a callabck or only the callback
 	this.get = function (path, ...args) {
-		this.httpServer.get(path, ...args);
+		this.frameworkServer.get(path, args[0]);
 		var options = {};
 		var f = args[0];
 		if(args.length > 1) { 
-			options =  args[0]; 
-			f = args[1]; 
+			options =  args[1]; 
 		}
 		if(options.ioDisable != true) {
 			var paramsPath = [];
@@ -30,12 +27,11 @@ function jiffyMultiServer(httpServer, options = null) {
 		}
 	}
 	this.post = function (path, ...args) {
-		this.httpServer.post(path, ...args);
+		this.frameworkServer.post(path, args[0]);
 		var options = {};
 		var f = args[0];
 		if(args.length > 1) { 
-			options =  args[0]; 
-			f = args[1]; 
+			options =  args[1]; 
 		}
 		if(options.ioDisable != true) {
 			var paramsPath = [];
@@ -52,7 +48,11 @@ function jiffyMultiServer(httpServer, options = null) {
 		if(args.length > 1) {
 			cb = args[1];
 		}
+		if(this.options.http == 'fastify') {
+		this.frameworkServer.listen(port, ...args);			
+		}else {
 		this.httpServer.listen(port, ...args);	
+		}
 			this.io.on('connection', (socket) => {
 					socket.on("req", (o) => {
 						var requestParam = o.reqPathServer.path;
@@ -97,7 +97,7 @@ function jiffyMultiServer(httpServer, options = null) {
 							}
 							// we create a new object instance, with the socket as member variable and the replication of the response function for compatibility
 							// in this way, when the refer to "this" in the response function, we get the socket of this request
-							var resObj = Object.assign({}, {"socket": socket, method: requestParam.split("/")[0], "send": this.response, "json": this.response, "timestamp": timestamp, "path": requestParam, type: this.setType});
+							var resObj = Object.assign({}, {"socket": socket, method: requestParam.split("/")[0], "send": this.response, "json": this.response, "timestamp": timestamp, "path": requestParam, type: this.setType, header: this.setHeaderDummy, headers: this.setHeaderDummy});
 							this.listServicesWS[keyService].f(responseObj, resObj);
 						}
 					});				
@@ -114,6 +114,12 @@ function jiffyMultiServer(httpServer, options = null) {
 	}
 	this.response = function (data, type = null){
 		this.socket.emit("res", {"path": this.path, "method": this.method, "timestamp": this.timestamp, "data": data, "type": (type || this.typeVal)});
+	}
+	this.header = function () {
+		return this;
+	}
+	this.headers = function () {
+		return this;
 	}
 	this.setType = function (type) {
 		this.typeVal = type;
