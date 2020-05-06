@@ -5,8 +5,8 @@ Mirror wrapper for server request on http &amp; websocket if is available
 
 **THIS IS A PROOF OF CONCEPT. USE IT AT YOUR OWN RISK**
 
-# What is jiffyMultiClient?
-jiffyMultiServer is a wrapper (that works togheter with [jiffyMultiClient](https://github.com/ipsilondev/jiffyMultiClient), that mirrors server to http services in websocket flavor (if available), supporting the same syntax, properties and methods as fastify & express to make transparent, effortless request, automatically changing protocols if available.
+# What is jiffyMultiServer?
+jiffyMultiServer is a wrapper (that works togheter with [jiffyMultiClient](https://github.com/ipsilondev/jiffyMultiClient), that mirrors server to http services in websocket flavor (if available), supporting the same syntax, properties and methods as fastify & express to make transparent, effortless serve request, automatically changing protocols if available.
 
 # Why?
 HTTP has a inherent overhead. Even if you have can improve server response times, is pretty hard that it will be faster than Websocket (from our benchmarking, the minimum latency on a HTTP request, is 30ms, vs 1-5ms of any websocket exchange). But at the same time, websocket is not instantly connected to the server either (WS takes at least, 200ms to establish a connection). What happen if you want to make a request as soon the page loads anyway and not wait for WS to connect? and have a transparent API that will not make your code hard to maintain? What happen if you want to just one day, stop using this and go back to simple fastify/express by only changing 3 lines of code? That's the reason behind creating jiffyMultiServer.
