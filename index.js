@@ -1,4 +1,3 @@
-
 function jiffyMultiServer(frameworkServer, httpServer, options = null) {
 	this.frameworkServer = frameworkServer;
 	this.httpServer = httpServer;
@@ -75,10 +74,7 @@ function jiffyMultiServer(frameworkServer, httpServer, options = null) {
 							socket.emit('res', {code: 404});
 						} else {
 							if(this.listServicesWS[keyService].params.length > 0) {
-								//console.log(this.listServicesWS[keyService].path);
-								//console.log(new RegExp(this.listServicesWS[keyService].path, 'ig').exec(requestParam));
 							var arrayValuesParams = new RegExp(this.listServicesWS[keyService].path, 'ig').exec(requestParam).splice(1,this.listServicesWS[keyService].params.length);
-							//console.log(arrayValuesParams);
 								for(var i=0; i < arrayValuesParams.length; i++){
 									responseObj.params[this.listServicesWS[keyService].params[i]] = arrayValuesParams[i];							
 								}
@@ -113,6 +109,7 @@ function jiffyMultiServer(frameworkServer, httpServer, options = null) {
 		return r;
 	}
 	this.response = function (data, type = null){
+		this.socket.compress(false);
 		this.socket.emit("res", {"path": this.path, "method": this.method, "timestamp": this.timestamp, "data": data, "type": (type || this.typeVal)});
 	}
 	this.header = function () {
