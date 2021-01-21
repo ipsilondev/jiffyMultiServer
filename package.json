@@ -28,7 +28,7 @@
   },
   "bundleDependencies": false,
   "dependencies": {
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.4.0"
   },
   "deprecated": false,
   "description": "Wrapper for nodejs server to answer requests on http & websocket",
